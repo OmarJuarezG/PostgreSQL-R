@@ -10,7 +10,7 @@ Paste code here.
 
 Paste code here.
 
-## Questions to solve and answers:
+## Questions to solve and answers
 1. Is there any particular actor/actress that is more profitable in terms of movie rents? Perhaps the company could make an add featuring prominent actors so it can boost theirs rents and by doing so its revenues.
 2. Is the rating of the film important to the revenues? Perhaps the company could shift its attention to a more profitable market instead of having all markets.
 3. Which are the most relevant countries in terms on rents and revenue for the company? Maybe we could reinforced those markets instead of spreading resources in markets that are not profitable.
@@ -23,4 +23,4 @@ Paste code here.
 10. How many films were returned in time, late or never returned? (*by Okoh Anita in freeCodeCamp with modification*)
 11. In which countries does Rent A Film have a presence and what is the customer base in each country? What are the total sales in each country? (from most to least) (*by Okoh Anita in freeCodeCamp*)
 
-## Merging Postgres with R to get the visuals:
+## Merging Postgres with R to get the visuals
