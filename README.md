@@ -10,6 +10,10 @@ Paste code here.
 
 Paste code here.
 
+3. Are the customers still active?
+
+Paste code here.
+
 ## Questions to solve and answers
 1. Is there any particular actor/actress that is more profitable in terms of movie rents? Perhaps the company could make an add featuring prominent actors so it can boost theirs rents and by doing so its revenues.
 2. Is the rating of the film important to the revenues? Perhaps the company could shift its attention to a more profitable market instead of having all markets.
