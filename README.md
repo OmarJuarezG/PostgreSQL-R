@@ -126,15 +126,109 @@ GROUP BY
 ORDER BY
 	SUM(payment.amount) DESC
 ```
+
+Answer: Gina Degeneres and Matthew Carrey could do a commercial as an attempt to boost sales.
+
 2. Is the rating of the film important to the revenues? Perhaps the company could shift its attention to a more profitable market instead of having all markets.
-3. Which are the most relevant countries in terms on rents and revenue for the company? Maybe we could reinforced those markets instead of spreading resources in markets that are not profitable.
-4. How the rents have behaved per month based on movie category? Could the rents be seasonal?
-5. How the renvenues have behaved per month based on movie category? This will have a high correlation with the results of previous question. Hint: do we have nulls?
-6. If the company wants to award premium users, it needs to identify their top 10. For this the compnay might need the customer name, month, year of payment and total payment amount for each month.
-7. How many loses or replacement cost the company is incurring by clients that are not returning the rented films?
-8. What are the top and least rented movies based on categories and their total revenues? (*by Okoh Anita in freeCodeCamp*)
-9. What is the average rental rate for each category? (*by Okoh Anita in freeCodeCamp*)
-10. How many films were returned in time, late or never returned? (*by Okoh Anita in freeCodeCamp with modification*)
-11. In which countries does Rent A Film have a presence and what is the customer base in each country? What are the total sales in each country? (from most to least) (*by Okoh Anita in freeCodeCamp*)
+
+```sql
+SELECT
+	film.rating                                  AS film_rating,
+	--actor.first_name || ' ' || actor.last_name AS actor_name,
+	COUNT(DISTINCT customer.customer_id)         AS rents,
+	ROUND(SUM(payment.amount))                   AS revenue
+FROM
+	actor
+JOIN
+	film_actor
+ON
+	actor.actor_id = film_actor.actor_id
+JOIN
+	film
+ON
+	film_actor.film_id = film.film_id
+JOIN
+	inventory
+ON
+	film.film_id = inventory.film_id
+JOIN
+	rental
+ON
+	inventory.inventory_id = rental.inventory_id
+JOIN
+	payment
+ON
+	rental.rental_id = payment.rental_id
+JOIN
+	customer
+ON
+	payment.customer_id = customer.customer_id
+GROUP BY
+	film.rating
+	--actor.first_name || ' ' || actor.last_name
+ORDER BY
+	SUM(payment.amount) DESC
+
+```
+It seems that rating overall is well distributed in rents but there is a little spread between the revenues. Comparing the PG-13 and G, there is a difference of 14,544 in revenue.
+
+Query output:
+
+| film_rating | rents | revenue |
+| ----------- | ----- | ------- |
+| PG-13 | 593 | 72872 |
+| PG | 591 | 71251 |
+| NC-17 | 597 | 67120 |
+| R | 595 | 65096 |
+| G | 590 | 58328 |
+
+3. What are the top and least rented movies based on categories and their total revenues? (*by Okoh Anita in freeCodeCamp*)
+```sql
+SELECT
+	category.name                         AS category,
+	COUNT (DISTINCT customer.customer_id) AS rents,
+	SUM(payment.amount)                   AS amount
+FROM
+	category
+JOIN
+	film_category
+ON
+	category.category_id = film_category.category_id
+JOIN
+	film
+ON
+	film_category.film_id = film.film_id
+JOIN
+	inventory
+ON
+	film.film_id = inventory.film_id
+JOIN
+	rental
+ON
+	rental.inventory_id = inventory.inventory_id
+JOIN
+	payment
+ON
+	rental.rental_id = payment.rental_id
+JOIN
+	customer
+ON
+	payment.customer_id = customer.customer_id
+GROUP BY
+	category.name
+ORDER BY
+	COUNT (customer.customer_id) DESC
+
+```
+
+
+4. Which are the most relevant countries in terms on rents and revenue for the company? Maybe we could reinforced those markets instead of spreading resources in markets that are not profitable.
+5. How the rents have behaved per month based on movie category? Could the rents be seasonal?
+6. How the renvenues have behaved per month based on movie category? This will have a high correlation with the results of previous question. Hint: do we have nulls?
+7. If the company wants to award premium users, it needs to identify their top 10. For this the compnay might need the customer name, month, year of payment and total payment amount for each month.
+8. How many loses or replacement cost the company is incurring by clients that are not returning the rented films?
+10. What is the average rental rate for each category? (*by Okoh Anita in freeCodeCamp*)
+11. How many films were returned in time, late or never returned? (*by Okoh Anita in freeCodeCamp with modification*)
+12. In which countries does Rent A Film have a presence and what is the customer base in each country? What are the total sales in each country? (from most to least) (*by Okoh Anita in freeCodeCamp*)
 
 ## Merging Postgres with R to get the visuals
