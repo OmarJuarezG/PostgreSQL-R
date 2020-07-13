@@ -275,6 +275,44 @@ ORDER BY
 **Paste answer here!!**
 
 11. How many films were returned in time, late or never returned? (*by Okoh Anita in freeCodeCamp with modification*)
+```sql
+SELECT
+	returned_days.return_description                    AS return_description,
+	COUNT(returned_days.inventory_id)                   AS number_of_films
+FROM(
+
+SELECT
+	inventory.inventory_id                              AS inventory_id,
+	film.rental_duration                                AS rental_duration,
+	DATE(rental.rental_date)                            AS rental_date,
+	DATE(rental.return_date)                            AS return_date,
+	DATE(rental.return_date) - DATE(rental.rental_date) AS days_returned,
+	CASE
+		WHEN DATE(rental.return_date) - DATE(rental.rental_date) = film.rental_duration
+			THEN 'return in time'
+		WHEN DATE(rental.return_date) - DATE(rental.rental_date) > film.rental_duration
+			THEN 'return late'
+		WHEN DATE(rental.return_date) - DATE(rental.rental_date) < film.rental_duration
+			THEN 'return early'
+		WHEN rental.return_date IS NULL
+			THEN 'never returned'
+	END                                                 AS return_description
+FROM
+	film
+JOIN
+	inventory
+ON
+	film.film_id = inventory.film_id
+JOIN
+	rental
+ON
+	inventory.inventory_id = rental.inventory_id
+) returned_days
+GROUP BY
+	returned_days.return_description
+```
+**Paste answer here!!**
+
 12. In which countries does Rent A Film have a presence and what is the customer base in each country? What are the total sales in each country? (from most to least) (*by Okoh Anita in freeCodeCamp*)
 
 ## Merging Postgres with R to get the visuals
