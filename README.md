@@ -93,12 +93,39 @@ Query output:
 | : | : | : | null | null | null |
 | : | : | : | null | null | null |
 
-3. Are the customers still active?
-
-Paste code here.
-
 ## Questions to solve and answers
 1. Is there any particular actor/actress that is more profitable in terms of movie rents? Perhaps the company could make an add featuring prominent actors so it can boost theirs rents and by doing so its revenues.
+```sql
+SELECT
+	actor.first_name||' '||actor.last_name AS concat_name,
+	SUM(payment.amount)                    AS amount
+FROM
+	actor
+JOIN
+	film_actor
+ON
+	actor.actor_id = film_actor.actor_id
+JOIN
+	film
+ON
+	film_actor.film_id = film.film_id
+JOIN
+	inventory
+ON
+	film.film_id = inventory.film_id
+JOIN
+	rental
+ON
+	inventory.inventory_id = rental.inventory_id
+JOIN
+	payment
+ON
+	rental.rental_id = payment.rental_id
+GROUP BY
+	actor.first_name||' '||actor.last_name
+ORDER BY
+	SUM(payment.amount) DESC
+```
 2. Is the rating of the film important to the revenues? Perhaps the company could shift its attention to a more profitable market instead of having all markets.
 3. Which are the most relevant countries in terms on rents and revenue for the company? Maybe we could reinforced those markets instead of spreading resources in markets that are not profitable.
 4. How the rents have behaved per month based on movie category? Could the rents be seasonal?
