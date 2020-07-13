@@ -220,14 +220,60 @@ ORDER BY
 	COUNT (customer.customer_id) DESC
 
 ```
-Paste the answer here!!
+**Paste answer here!!**
 
 4. Which are the most relevant countries in terms on rents and revenue for the company? Maybe we could reinforced those markets instead of spreading resources in markets that are not profitable.
 5. How the rents have behaved per month based on movie category? Could the rents be seasonal?
 6. How the renvenues have behaved per month based on movie category? This will have a high correlation with the results of previous question. Hint: do we have nulls?
 7. If the company wants to award premium users, it needs to identify their top 10. For this the compnay might need the customer name, month, year of payment and total payment amount for each month.
-8. How many loses or replacement cost the company is incurring by clients that are not returning the rented films?
+8. How many loses or replacement cost the company is incurring by clients that are not returning the rented films? Hint: rental_duration gives the number of days the film can be rented.
+```sql
+SELECT
+	SUM(film.replacement_cost) AS incurring_costs
+FROM
+	film
+JOIN
+	inventory
+ON
+	film.film_id = inventory.inventory_id
+JOIN
+	rental
+ON
+	inventory.inventory_id = rental.inventory_id
+JOIN
+	customer
+ON
+	rental.customer_id = customer.customer_id
+WHERE
+	rental.return_date IS NULL
+
+```
+The cost is 911.55. **What is the net revenue? This is substracting the replacement costs**
+
 10. What is the average rental rate for each category? (*by Okoh Anita in freeCodeCamp*)
+
+```sql
+SELECT
+	category.name                  AS category,
+	ROUND(AVG(film.rental_rate),2) AS average_rental_rate
+FROM
+	film
+JOIN
+	film_category
+ON
+	film.film_id = film_category.film_id
+JOIN
+	category
+ON
+	film_category.category_id = category.category_id
+GROUP BY
+	category.name
+ORDER BY
+	ROUND(AVG(film.rental_rate),2) DESC
+
+```
+**Paste answer here!!**
+
 11. How many films were returned in time, late or never returned? (*by Okoh Anita in freeCodeCamp with modification*)
 12. In which countries does Rent A Film have a presence and what is the customer base in each country? What are the total sales in each country? (from most to least) (*by Okoh Anita in freeCodeCamp*)
 
