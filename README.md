@@ -3,12 +3,95 @@ Uses DVD rental database to develop an interactive document and an app. To do th
 ## Analyzing the data
 By exploring the data I've found the following:
 1. Not all films are present in the inventory. Since they're not present in the inventory the company can not rent them. The code that allows to find this is the following:
-
-Paste code here.
+```sql
+SELECT
+	film.film_id              AS film_id,
+	inventory.inventory_id    AS inventory_id,
+	DATE(rental.rental_date)  AS rental_date,
+	rental.rental_id          AS rental_id,
+	category.name             AS category,
+	payment.amount            AS amount
+FROM 
+	film
+LEFT JOIN
+	inventory
+ON
+	film.film_id = inventory.film_id
+LEFT JOIN
+	rental
+ON
+	rental.inventory_id = inventory.inventory_id
+LEFT JOIN
+	payment
+ON
+	rental.rental_id = payment.rental_id
+LEFT JOIN
+	film_category
+ON
+	film.film_id = film_category.film_id
+LEFT JOIN
+	category
+ON
+	film_category.category_id = category.category_id
+WHERE 
+	inventory.inventory_id IS NULL
+```
+Query output:
+| film_id | inventory_id | rental_date | rental_id | category | amount |
+| ------- | ------------ | ----------- | --------- | -------- | ------ |
+| 802 | null | null | null | Action | null |
+| 497 | null | null | null | Documentary | null |
+| 801 | null | null | null | Children | null |
+| : | null | null | null | : | null |
+| : | null | null | null | : | null |
 
 2. Some records have missing values. For example, there are movies that are in the inventory and were rented but do not have payment_id, payment_date or customer associated with the rent. There might be some data corruption in those cases. The code to find this is the following:
-
-Paste code here.
+```sql
+SELECT 
+  DATE(rental.rental_date)   AS rental_date,
+  rental.rental_id           AS rental_id,
+  category.name              AS category,
+  payment.payment_id         AS payment_id,
+  customer.customer_id       AS customer_id,
+  payment.amount             AS amount
+FROM 
+	film
+LEFT JOIN
+	inventory
+ON
+	film.film_id = inventory.film_id
+LEFT JOIN
+	rental
+ON
+	rental.inventory_id = inventory.inventory_id
+LEFT JOIN
+	payment
+ON
+	rental.rental_id = payment.rental_id
+LEFT JOIN
+	customer
+ON
+	payment.customer_id = customer.customer_id
+LEFT JOIN
+	film_category
+ON
+	film.film_id = film_category.film_id
+LEFT JOIN
+	category
+ON
+	film_category.category_id = category.category_id
+WHERE
+	payment.payment_id IS NULL AND
+	customer.customer_id IS NULL
+```
+Query output:
+| rental_date | rental_id | category | payment_id | customer_id | amount |
+| ------- | ------------ | ----------- | --------- | -------- | ------ |
+| 2005-05-26 | 251 | New | null | null | null |
+| 2005-06-17 | 2024 | Music | null | null | null |
+| 2005-05-31 | 1101 | Sports | null | null | null |
+| : | : | : | null | null | null |
+| : | : | : | null | null | null |
 
 3. Are the customers still active?
 
