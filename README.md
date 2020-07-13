@@ -97,7 +97,7 @@ Query output:
 1. Is there any particular actor/actress that is more profitable in terms of movie rents? Perhaps the company could make an add featuring prominent actors so it can boost theirs rents and by doing so its revenues.
 ```sql
 SELECT
-	actor.first_name||' '||actor.last_name AS concat_name,
+	actor.first_name||' '||actor.last_name AS actor_name,
 	SUM(payment.amount)                    AS amount
 FROM
 	actor
@@ -220,7 +220,7 @@ ORDER BY
 	COUNT (customer.customer_id) DESC
 
 ```
-
+Paste the answer here!!
 
 4. Which are the most relevant countries in terms on rents and revenue for the company? Maybe we could reinforced those markets instead of spreading resources in markets that are not profitable.
 5. How the rents have behaved per month based on movie category? Could the rents be seasonal?
