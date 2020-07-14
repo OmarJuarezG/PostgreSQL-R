@@ -134,7 +134,6 @@ Answer: Gina Degeneres and Matthew Carrey could do a commercial as an attempt to
 ```sql
 SELECT
 	film.rating                                  AS film_rating,
-	--actor.first_name || ' ' || actor.last_name AS actor_name,
 	COUNT(DISTINCT customer.customer_id)         AS rents,
 	ROUND(SUM(payment.amount))                   AS revenue
 FROM
@@ -165,7 +164,6 @@ ON
 	payment.customer_id = customer.customer_id
 GROUP BY
 	film.rating
-	--actor.first_name || ' ' || actor.last_name
 ORDER BY
 	SUM(payment.amount) DESC
 
@@ -223,6 +221,61 @@ ORDER BY
 **Paste answer here!!**
 
 4. Which are the most relevant countries in terms on rents and revenue for the company? Maybe we could reinforced those markets instead of spreading resources in markets that are not profitable.
+
+```sql
+SELECT
+	country.country                       AS country,
+	COUNT (DISTINCT customer.customer_id) AS demand,
+	SUM(payment.amount)                   AS revenue
+FROM
+	category
+JOIN
+	film_category
+ON
+	category.category_id = film_category.category_id
+JOIN
+	film
+ON
+	film_category.film_id = film.film_id
+JOIN
+	inventory
+ON
+	film.film_id = inventory.film_id
+JOIN
+	rental
+ON
+	rental.inventory_id = inventory.inventory_id
+JOIN
+	payment
+ON
+	rental.rental_id = payment.rental_id
+JOIN
+	customer
+ON
+	payment.customer_id = customer.customer_id
+JOIN
+	address
+ON
+	customer.address_id = address.address_id
+JOIN
+	city
+ON
+	address.city_id = city.city_id
+JOIN
+	country
+ON
+	city.country_id = country.country_id
+GROUP BY
+	country.country
+HAVING
+	COUNT (DISTINCT customer.customer_id) >= 10
+ORDER BY
+	SUM(payment.amount) DESC
+```
+There are a lot of countries in where the demand is very low even having just one client renting movies. Demand >= 10 could be a treshold to evaluate future policies.
+
+**Paste answer here!!**
+
 5. How the rents have behaved per month based on movie category? Could the rents be seasonal?
 6. How the renvenues have behaved per month based on movie category? This will have a high correlation with the results of previous question. Hint: do we have nulls?
 7. If the company wants to award premium users, it needs to identify their top 10. For this the compnay might need the customer name, month, year of payment and total payment amount for each month.
@@ -312,7 +365,5 @@ GROUP BY
 	returned_days.return_description
 ```
 **Paste answer here!!**
-
-12. In which countries does Rent A Film have a presence and what is the customer base in each country? What are the total sales in each country? (from most to least) (*by Okoh Anita in freeCodeCamp*)
 
 ## Merging Postgres with R to get the visuals
