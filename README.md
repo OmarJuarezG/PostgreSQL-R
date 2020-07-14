@@ -36,14 +36,8 @@ ON
 WHERE 
 	inventory.inventory_id IS NULL
 ```
-Query output:
-| film_id | inventory_id | rental_date | rental_id | category | amount |
-| ------- | ------------ | ----------- | --------- | -------- | ------ |
-| 802 | null | null | null | Action | null |
-| 497 | null | null | null | Documentary | null |
-| 801 | null | null | null | Children | null |
-| : | null | null | null | : | null |
-| : | null | null | null | : | null |
+
+![Query output](/OutputAnalysis_1.PNG)
 
 2. Some records have missing values. For example, there are movies that are in the inventory and were rented but do not have payment_id, payment_date or customer associated with the rent. There might be some data corruption in those cases. The code to find this is the following:
 ```sql
@@ -84,14 +78,7 @@ WHERE
 	payment.payment_id IS NULL AND
 	customer.customer_id IS NULL
 ```
-Query output:
-| rental_date | rental_id | category | payment_id | customer_id | amount |
-| ------- | ------------ | ----------- | --------- | -------- | ------ |
-| 2005-05-26 | 251 | New | null | null | null |
-| 2005-06-17 | 2024 | Music | null | null | null |
-| 2005-05-31 | 1101 | Sports | null | null | null |
-| : | : | : | null | null | null |
-| : | : | : | null | null | null |
+![Query output](/OutputAnalysis_2.PNG)
 
 ## Questions to solve and answers
 1. Is there any particular actor/actress that is more profitable in terms of movie rents? Perhaps the company could make an add featuring prominent actors so it can boost theirs rents and by doing so its revenues.
@@ -128,6 +115,8 @@ ORDER BY
 ```
 
 Answer: Gina Degeneres and Matthew Carrey could do a commercial as an attempt to boost sales.
+
+![Query output](/AnswerQuestion1.PNG)
 
 2. Is the rating of the film important to the revenues? Perhaps the company could shift its attention to a more profitable market instead of having all markets.
 
@@ -170,15 +159,7 @@ ORDER BY
 ```
 It seems that rating overall is well distributed in rents but there is a little spread between the revenues. Comparing the PG-13 and G, there is a difference of 14,544 in revenue.
 
-Query output:
-
-| film_rating | rents | revenue |
-| ----------- | ----- | ------- |
-| PG-13 | 593 | 72872 |
-| PG | 591 | 71251 |
-| NC-17 | 597 | 67120 |
-| R | 595 | 65096 |
-| G | 590 | 58328 |
+![Query output](/AnswerQuestion2.PNG)
 
 3. What are the top and least rented movies based on categories and their total revenues? (*by Okoh Anita in freeCodeCamp*)
 ```sql
@@ -218,7 +199,7 @@ ORDER BY
 	COUNT (customer.customer_id) DESC
 
 ```
-**Paste answer here!!**
+![Query output](/AnswerQuestion3.PNG)
 
 4. Which are the most relevant countries in terms on rents and revenue for the company? Maybe we could reinforced those markets instead of spreading resources in markets that are not profitable.
 
@@ -274,7 +255,7 @@ ORDER BY
 ```
 There are a lot of countries in where the demand is very low even having just one client renting movies. Demand >= 10 could be a treshold to evaluate future policies.
 
-**Paste answer here!!**
+![Query output](/AnswerQuestion4.PNG)
 
 5. How the rents have behaved per month based on movie category? Could the rents be seasonal? Obtain the values just for the year 2005
 ```sql
@@ -330,7 +311,7 @@ FROM(
 ) rent_per_day_table
 
 ```
-**Paste answer here!!**
+![Query output](/AnswerQuestion5.PNG)
 
 6. How the renvenues have behaved per month based on movie category? This will have a high correlation with the results of previous question.
 
@@ -387,6 +368,8 @@ FROM(
 ) rent_per_day_table
 
 ```
+![Query output](/AnswerQuestion6.PNG)
+
 7. If the company wants to reward premium users, it needs to identify their top 20. For this the company might need the customer's details.
 
 ```sql
@@ -427,6 +410,7 @@ ORDER BY
 	SUM(payment.amount) DESC
 LIMIT 20
 ```
+![Query output](/AnswerQuestion7.PNG)
 
 8. How many loses or replacement cost the company is incurring by clients that are not returning the rented films? Hint: rental_duration gives the number of days the film can be rented.
 ```sql
@@ -450,7 +434,9 @@ WHERE
 	rental.return_date IS NULL
 
 ```
-The cost is 911.55. **What is the net revenue? This is substracting the replacement costs**
+The cost is 911.55.
+
+![Query output](/AnswerQuestion8.PNG)
 
 9. What is the average rental rate for each category? (*by Okoh Anita in freeCodeCamp*)
 
@@ -474,7 +460,8 @@ ORDER BY
 	ROUND(AVG(film.rental_rate),2) DESC
 
 ```
-**Paste answer here!!**
+
+![Query output](/AnswerQuestion9.PNG)
 
 10. How many films were returned in time, late or never returned? (*by Okoh Anita in freeCodeCamp with modification*)
 ```sql
@@ -513,6 +500,7 @@ ON
 GROUP BY
 	returned_days.return_description
 ```
-**Paste answer here!!**
+
+![Query output](/AnswerQuestion10.PNG)
 
 ## Merging Postgres with R to get the visuals
