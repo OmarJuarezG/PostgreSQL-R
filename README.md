@@ -1,6 +1,6 @@
 # PostgreSQL-R
 Uses DVD rental database to develop an interactive document and an app. To do this we connect R with a Postgres database.
-## Analyzing the data
+## Analyzing the data (basic analysis)
 By exploring the data I've found the following:
 1. Not all films are present in the inventory. Since they're not present in the inventory the company can not rent them. The code that allows to find this is the following:
 ```sql
