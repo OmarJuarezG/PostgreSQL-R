@@ -276,9 +276,118 @@ There are a lot of countries in where the demand is very low even having just on
 
 **Paste answer here!!**
 
-5. How the rents have behaved per month based on movie category? Could the rents be seasonal?
-6. How the renvenues have behaved per month based on movie category? This will have a high correlation with the results of previous question. Hint: do we have nulls?
-7. If the company wants to award premium users, it needs to identify their top 10. For this the compnay might need the customer name, month, year of payment and total payment amount for each month.
+5. How the rents have behaved per month based on movie category? Could the rents be seasonal? Obtain the values just for the year 2005
+```sql
+
+SELECT
+	rent_per_day_table.rental_date,
+	rent_per_day_table.movie_category,
+	rent_per_day_table.total_rents_per_day,
+	SUM(rent_per_day_table.total_rents_per_day) OVER 
+		(PARTITION BY rent_per_day_table.movie_category ORDER BY rent_per_day_table.rental_date) AS cum_rents
+FROM(
+	SELECT
+		temp_rent_table.rental_date AS rental_date,
+		temp_rent_table.category AS movie_category,
+		COUNT (DISTINCT temp_rent_table.rental_id) AS total_rents_per_day,
+		SUM(temp_rent_table.amount) AS total_revenue
+	FROM(
+		SELECT 
+			DATE(rental.rental_date) AS rental_date,
+			rental.rental_id AS rental_id,
+			category.name AS category,
+			payment.amount AS amount
+		FROM 
+			film
+		JOIN
+			inventory
+		ON
+			film.film_id = inventory.film_id
+		JOIN
+			rental
+		ON
+			rental.inventory_id = inventory.inventory_id
+		JOIN
+			payment
+		ON
+			rental.rental_id = payment.rental_id
+		JOIN
+			film_category
+		ON
+			film.film_id = film_category.film_id
+		JOIN
+			category
+		ON
+			film_category.category_id = category.category_id
+		WHERE 
+			inventory.inventory_id IS NOT NULL AND
+			rental.rental_id IS NOT NULL AND
+			EXTRACT (YEAR FROM rental_date) = 2005
+	) temp_rent_table
+	GROUP BY
+		temp_rent_table.rental_date,
+		temp_rent_table.category
+) rent_per_day_table
+
+```
+**Paste answer here!!**
+
+6. How the renvenues have behaved per month based on movie category? This will have a high correlation with the results of previous question.
+
+```sql
+
+SELECT
+	rent_per_day_table.rental_date,
+	rent_per_day_table.movie_category,
+	rent_per_day_table.total_rents_per_day,
+	SUM(rent_per_day_table.total_revenue) OVER 
+		(PARTITION BY rent_per_day_table.movie_category ORDER BY rent_per_day_table.rental_date) AS cum_revenue
+FROM(
+	SELECT
+		temp_rent_table.rental_date AS rental_date,
+		temp_rent_table.category AS movie_category,
+		COUNT (DISTINCT temp_rent_table.rental_id) AS total_rents_per_day,
+		SUM(temp_rent_table.amount) AS total_revenue
+	FROM(
+		SELECT 
+			DATE(rental.rental_date) AS rental_date,
+			rental.rental_id AS rental_id,
+			category.name AS category,
+			payment.amount AS amount
+		FROM 
+			film
+		JOIN
+			inventory
+		ON
+			film.film_id = inventory.film_id
+		JOIN
+			rental
+		ON
+			rental.inventory_id = inventory.inventory_id
+		JOIN
+			payment
+		ON
+			rental.rental_id = payment.rental_id
+		JOIN
+			film_category
+		ON
+			film.film_id = film_category.film_id
+		JOIN
+			category
+		ON
+			film_category.category_id = category.category_id
+		WHERE 
+			inventory.inventory_id IS NOT NULL AND
+			rental.rental_id IS NOT NULL AND
+			EXTRACT (YEAR FROM rental_date) = 2005
+	) temp_rent_table
+	GROUP BY
+		temp_rent_table.rental_date,
+		temp_rent_table.category
+) rent_per_day_table
+
+```
+7. If the company wants to award premium users, it needs to identify their top 10. For this the company might need the customer name, month, year of payment and total payment amount for each month.
 8. How many loses or replacement cost the company is incurring by clients that are not returning the rented films? Hint: rental_duration gives the number of days the film can be rented.
 ```sql
 SELECT
