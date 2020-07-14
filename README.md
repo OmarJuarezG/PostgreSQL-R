@@ -387,7 +387,47 @@ FROM(
 ) rent_per_day_table
 
 ```
-7. If the company wants to award premium users, it needs to identify their top 10. For this the company might need the customer name, month, year of payment and total payment amount for each month.
+7. If the company wants to reward premium users, it needs to identify their top 20. For this the company might need the customer's details.
+
+```sql
+SELECT
+	customer.first_name || ' ' || customer.last_name AS customer_name,
+	SUM(payment.amount)                              AS total_payment,
+	customer.email                                   AS email,
+	address.address                                  AS address,
+	address.phone                                    AS phone,
+	city.city                                        AS city,
+	country.country                                  AS country
+FROM
+	customer
+JOIN
+	payment
+ON
+	customer.customer_id = payment.customer_id
+JOIN
+	address
+ON
+	customer.address_id = address.address_id
+JOIN
+	city
+ON
+	address.city_id = city.city_id
+JOIN
+	country
+ON
+	city.country_id = country.country_id
+GROUP BY
+	customer.first_name || ' ' || customer.last_name,
+	customer.email,
+	address.address,
+	address.phone,
+	city.city,
+	country.country
+ORDER BY
+	SUM(payment.amount) DESC
+LIMIT 20
+```
+
 8. How many loses or replacement cost the company is incurring by clients that are not returning the rented films? Hint: rental_duration gives the number of days the film can be rented.
 ```sql
 SELECT
