@@ -114,7 +114,7 @@ ORDER BY
 	SUM(payment.amount) DESC
 ```
 
-Answer: Gina Degeneres and Matthew Carrey could do a commercial as an attempt to boost sales.
+Answer: Susan Davis, Gina Degeneres and Matthew Carrey could do a commercial as an attempt to boost sales.
 
 ![Query output](/AnswerQuestion1.PNG)
 
