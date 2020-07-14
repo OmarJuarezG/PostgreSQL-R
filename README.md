@@ -452,7 +452,7 @@ WHERE
 ```
 The cost is 911.55. **What is the net revenue? This is substracting the replacement costs**
 
-10. What is the average rental rate for each category? (*by Okoh Anita in freeCodeCamp*)
+9. What is the average rental rate for each category? (*by Okoh Anita in freeCodeCamp*)
 
 ```sql
 SELECT
@@ -476,7 +476,7 @@ ORDER BY
 ```
 **Paste answer here!!**
 
-11. How many films were returned in time, late or never returned? (*by Okoh Anita in freeCodeCamp with modification*)
+10. How many films were returned in time, late or never returned? (*by Okoh Anita in freeCodeCamp with modification*)
 ```sql
 SELECT
 	returned_days.return_description                    AS return_description,
