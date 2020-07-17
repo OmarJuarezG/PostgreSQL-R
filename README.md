@@ -1,5 +1,5 @@
-# PostgreSQL-R
-Uses DVD rental database to develop an interactive document and an app. To do this we connect R with a Postgres database.
+# Postgres Queries
+Uses DVD rental database to develop an interactive document. To do this we connect R with a Postgres database.
 ## Analyzing the data (basic analysis)
 By exploring the data I've found the following:
 1. Not all films are present in the inventory. Since they're not present in the inventory the company can not rent them. The code that allows to find this is the following:
@@ -81,11 +81,12 @@ WHERE
 ![Query output](/OutputAnalysis_2.PNG)
 
 ## Questions to solve and answers
-1. Is there any particular actor/actress that is more profitable in terms of movie rents? Perhaps the company could make an add featuring prominent actors so it can boost theirs rents and by doing so its revenues.
+**Question 1:** Is there any particular actor/actress that is more profitable in terms of movie rents? Perhaps the company could make an add featuring prominent actors so it can boost theirs rents and by doing so its revenues.
+
 ```sql
 SELECT
-	actor.first_name||' '||actor.last_name AS actor_name,
-	SUM(payment.amount)                    AS amount
+  actor.first_name||' '||actor.last_name AS actor_name,
+  SUM(payment.amount)                    AS amount
 FROM
 	actor
 JOIN
@@ -99,7 +100,7 @@ ON
 JOIN
 	inventory
 ON
-	film.film_id = inventory.film_id
+  film.film_id = inventory.film_id
 JOIN
 	rental
 ON
@@ -112,13 +113,14 @@ GROUP BY
 	actor.first_name||' '||actor.last_name
 ORDER BY
 	SUM(payment.amount) DESC
+LIMIT 10
 ```
 
 Answer: Susan Davis, Gina Degeneres and Matthew Carrey could do a commercial as an attempt to boost sales.
 
 ![Query output](/AnswerQuestion1.PNG)
 
-2. Is the rating of the film important to the revenues? Perhaps the company could shift its attention to a more profitable market instead of having all markets.
+**Question 2:** Is the rating of the film important to the revenues? Perhaps the company could shift its attention to a more profitable market instead of having all markets.
 
 ```sql
 SELECT
@@ -157,11 +159,11 @@ ORDER BY
 	SUM(payment.amount) DESC
 
 ```
-It seems that rating overall is well distributed in rents but there is a little spread between the revenues. Comparing the PG-13 and G, there is a difference of 14,544 in revenue.
+It seems that rating overall is well distributed in rents but there is a little spread between revenues. Comparing the PG-13 and G, there is a difference of 14,544 in revenue.
 
 ![Query output](/AnswerQuestion2.PNG)
 
-3. What are the top and least rented movies based on categories and their total revenues? (*by Okoh Anita in freeCodeCamp*)
+**Question 3:** What are the top and least rented movies based on categories and their total revenues? (by Okoh Anita in freeCodeCamp)
 ```sql
 SELECT
 	category.name                         AS category,
@@ -201,7 +203,7 @@ ORDER BY
 ```
 ![Query output](/AnswerQuestion3.PNG)
 
-4. Which are the most relevant countries in terms on rents and revenue for the company? Maybe we could reinforced those markets instead of spreading resources in markets that are not profitable.
+**Question 4:** Which are the most relevant countries in terms on rents and revenue for the company? Maybe we could reinforced those markets instead of spreading resources in markets that are not profitable.
 
 ```sql
 SELECT
@@ -257,120 +259,64 @@ There are a lot of countries in where the demand is very low even having just on
 
 ![Query output](/AnswerQuestion4.PNG)
 
-5. How the rents have behaved per month based on movie category? Could the rents be seasonal? Obtain the values just for the year 2005
+**Question 5:** How the revenues have behaved in june based on movie category? Just consider the top 5 based on rents(question 3)
 ```sql
 
 SELECT
-	rent_per_day_table.rental_date,
-	rent_per_day_table.movie_category,
-	rent_per_day_table.total_rents_per_day,
-	SUM(rent_per_day_table.total_rents_per_day) OVER 
-		(PARTITION BY rent_per_day_table.movie_category ORDER BY rent_per_day_table.rental_date) AS cum_rents
-FROM(
-	SELECT
-		temp_rent_table.rental_date AS rental_date,
-		temp_rent_table.category AS movie_category,
-		COUNT (DISTINCT temp_rent_table.rental_id) AS total_rents_per_day,
-		SUM(temp_rent_table.amount) AS total_revenue
-	FROM(
-		SELECT 
-			DATE(rental.rental_date) AS rental_date,
-			rental.rental_id AS rental_id,
-			category.name AS category,
-			payment.amount AS amount
-		FROM 
-			film
-		JOIN
-			inventory
-		ON
-			film.film_id = inventory.film_id
-		JOIN
-			rental
-		ON
-			rental.inventory_id = inventory.inventory_id
-		JOIN
-			payment
-		ON
-			rental.rental_id = payment.rental_id
-		JOIN
-			film_category
-		ON
-			film.film_id = film_category.film_id
-		JOIN
-			category
-		ON
-			film_category.category_id = category.category_id
-		WHERE 
-			inventory.inventory_id IS NOT NULL AND
-			rental.rental_id IS NOT NULL AND
-			EXTRACT (YEAR FROM rental_date) = 2005
-	) temp_rent_table
-	GROUP BY
-		temp_rent_table.rental_date,
-		temp_rent_table.category
-) rent_per_day_table
-
-```
-![Query output](/AnswerQuestion5.PNG)
-
-6. How the renvenues have behaved per month based on movie category? This will have a high correlation with the results of previous question.
-
-```sql
-
-SELECT
-	rent_per_day_table.rental_date,
-	rent_per_day_table.movie_category,
-	rent_per_day_table.total_rents_per_day,
-	SUM(rent_per_day_table.total_revenue) OVER 
+  rent_per_day_table.rental_date         AS rental_date,
+  rent_per_day_table.movie_category      AS movie_category,
+  rent_per_day_table.total_rents_per_day AS rents_per_day,
+  SUM(rent_per_day_table.total_revenue) OVER 
 		(PARTITION BY rent_per_day_table.movie_category ORDER BY rent_per_day_table.rental_date) AS cum_revenue
 FROM(
-	SELECT
-		temp_rent_table.rental_date AS rental_date,
-		temp_rent_table.category AS movie_category,
-		COUNT (DISTINCT temp_rent_table.rental_id) AS total_rents_per_day,
-		SUM(temp_rent_table.amount) AS total_revenue
-	FROM(
-		SELECT 
-			DATE(rental.rental_date) AS rental_date,
-			rental.rental_id AS rental_id,
-			category.name AS category,
-			payment.amount AS amount
-		FROM 
-			film
-		JOIN
-			inventory
-		ON
-			film.film_id = inventory.film_id
-		JOIN
-			rental
-		ON
-			rental.inventory_id = inventory.inventory_id
-		JOIN
-			payment
-		ON
-			rental.rental_id = payment.rental_id
-		JOIN
-			film_category
-		ON
-			film.film_id = film_category.film_id
-		JOIN
-			category
-		ON
-			film_category.category_id = category.category_id
-		WHERE 
-			inventory.inventory_id IS NOT NULL AND
-			rental.rental_id IS NOT NULL AND
-			EXTRACT (YEAR FROM rental_date) = 2005
-	) temp_rent_table
-	GROUP BY
-		temp_rent_table.rental_date,
-		temp_rent_table.category
+  SELECT
+    temp_rent_table.rental_date                AS rental_date,
+    temp_rent_table.category                   AS movie_category,
+    COUNT (DISTINCT temp_rent_table.rental_id) AS total_rents_per_day,
+    SUM(temp_rent_table.amount)                AS total_revenue
+  FROM(
+    SELECT 
+      DATE(rental.rental_date) AS rental_date,
+      rental.rental_id         AS rental_id,
+      category.name            AS category,
+      payment.amount           AS amount
+    FROM 
+      film
+    JOIN
+      inventory
+    ON
+      film.film_id = inventory.film_id
+    JOIN
+      rental
+    ON
+      rental.inventory_id = inventory.inventory_id
+    JOIN
+      payment
+    ON
+      rental.rental_id = payment.rental_id
+    JOIN
+      film_category
+    ON
+      film.film_id = film_category.film_id
+    JOIN
+    category
+    ON
+      film_category.category_id = category.category_id
+    WHERE 
+      inventory.inventory_id IS NOT NULL AND
+      rental.rental_id IS NOT NULL AND
+      EXTRACT(YEAR FROM rental_date) = 2005 AND
+      EXTRACT(MONTH FROM rental_date) = 6
+  ) temp_rent_table
+  GROUP BY
+    temp_rent_table.rental_date,
+    temp_rent_table.category
 ) rent_per_day_table
 
 ```
 ![Query output](/AnswerQuestion6.PNG)
 
-7. If the company wants to reward premium users, it needs to identify their top 20. For this the company might need the customer's details.
+**Question 6:** If the company wants to reward premium users, it needs to identify their top 20. For this the company might need the customer's details.
 
 ```sql
 SELECT
@@ -412,7 +358,8 @@ LIMIT 20
 ```
 ![Query output](/AnswerQuestion7.PNG)
 
-8. How many loses or replacement cost the company is incurring by clients that are not returning the rented films? Hint: rental_duration gives the number of days the film can be rented.
+**Question 7:** How many loses or replacement cost the company is incurring by clients that are not returning the rented films?
+
 ```sql
 SELECT
 	SUM(film.replacement_cost) AS incurring_costs
@@ -438,7 +385,7 @@ The cost is 911.55.
 
 ![Query output](/AnswerQuestion8.PNG)
 
-9. What is the average rental rate for each category? (*by Okoh Anita in freeCodeCamp*)
+**Question 8:** What is the average rental rate for each category? (by Okoh Anita in freeCodeCamp)
 
 ```sql
 SELECT
@@ -463,7 +410,8 @@ ORDER BY
 
 ![Query output](/AnswerQuestion9.PNG)
 
-10. How many films were returned in time, late or never returned? (*by Okoh Anita in freeCodeCamp with modification*)
+**Question 9:** How many films were returned in time, late or never returned? (by Okoh Anita in freeCodeCamp with modification)
+
 ```sql
 SELECT
 	returned_days.return_description                    AS return_description,
@@ -499,6 +447,8 @@ ON
 ) returned_days
 GROUP BY
 	returned_days.return_description
+ORDER BY
+	COUNT(returned_days.inventory_id) DESC
 ```
 
 ![Query output](/AnswerQuestion10.PNG)
