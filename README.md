@@ -81,7 +81,7 @@ WHERE
 ![Query output](/OutputAnalysis_2.PNG)
 
 ## Questions to solve and answers
-**Question 1:** Is there any particular actor/actress that is more profitable in terms of movie rents? Perhaps the company could make an add featuring prominent actors so it can boost theirs rents and by doing so its revenues.
+**Question 1:** Is there any particular actor/actress that is more profitable in terms of movie rents? Perhaps the company could make an add featuring prominent actors so it can boost rents and revenue.
 
 ```sql
 SELECT
