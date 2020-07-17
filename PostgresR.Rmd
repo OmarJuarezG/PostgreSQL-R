@@ -1,7 +1,6 @@
 ---
 title: "Postgres + Shiny"
 author: "Omar Juarez"
-#date: "15 de julio de 2020"
 output: html_document
 ---
 
@@ -15,7 +14,7 @@ library(DT)
 library(highcharter)
 library(shiny)
 library(leaflet)
-pass <- 'database_9091'
+pass <- '***' # use your own password
 con <- dbConnect(PostgreSQL(),user = 'postgres', dbname = 'dvdrental', 
                            host = 'localhost', port = 5432, password = pass)
 dbListTables(conn = con)
