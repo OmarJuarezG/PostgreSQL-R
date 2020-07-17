@@ -15,6 +15,8 @@ The libraries used were the following:
 - library(shiny)
 - library(leaflet)
 
+To see the document go to [Postgres + Shiny](https://rpubs.com/Omar_Juarez/640054)
+
 **Question 1:** Is there any particular actor/actress that is more profitable in terms of movie rents? Perhaps the company could make an add featuring prominent actors so it can boost theirs rents and by doing so its revenues.
 
 Query:
